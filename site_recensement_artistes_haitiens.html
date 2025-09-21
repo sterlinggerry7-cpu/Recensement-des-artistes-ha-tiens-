@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Recensement des artistes haïtiens — Formulaire</title>
+  <style>
+    :root{--bg:#f6f7fb;--card:#ffffff;--accent:#0b6efd;--muted:#6b7280;--radius:12px}
+    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); margin:0; padding:24px; color:#111}
+    .wrap{max-width:900px;margin:0 auto}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    p.lead{margin:0;color:var(--muted)}
+
+    form.card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:0 6px 18px rgba(22,28,37,0.06)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;font-size:13px;margin-bottom:6px}
+    input[type=text], input[type=email], input[type=url], select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e9ef;font-size:14px}
+    textarea{min-height:120px;resize:vertical}
+
+    .full{grid-column:1 / -1}
+    .actions{display:flex;gap:8px;align-items:center;margin-top:12px}
+    button{background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
+    .secondary{background:#fff;color:var(--accent);border:1px solid #dbe6ff}
+    .hint{font-size:13px;color:var(--muted)}
+    .preview{display:flex;gap:10px;align-items:center}
+    .preview img{width:84px;height:84px;object-fit:cover;border-radius:8px;border:1px solid #eee}
+
+    .required::after{content:" *";color:#b91c1c}
+
+    @media (max-width:720px){.grid{grid-template-columns:1fr} .preview img{width:64px;height:64px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Recensement des artistes haïtiens</h1>
+        <p class="lead">Formulaire d'inscription — partagez le lien aux artistes pour qu'ils se déclarent.</p>
+      </div>
+    </header>
+
+    <!-- IMPORTANT: Remplacez ACTION_URL par votre endpoint Formspree, Netlify Forms, ou votre webapp Google App Script. -->
+    <form id="artistForm" class="card" method="POST" action="ACTION_URL" enctype="multipart/form-data" novalidate>
+
+      <div class="grid">
+        <div>
+          <label for="fullname" class="required">Nom complet</label>
+          <input id="fullname" name="fullname" type="text" required placeholder="Prénom Nom" />
+        </div>
+
+        <div>
+          <label for="email">E‑mail (optionnel)</label>
+          <input id="email" name="email" type="email" placeholder="adresse@exemple.com" />
+        </div>
+
+        <div>
+          <label for="country" class="required">Position géographique</label>
+          <input id="country" name="location" type="text" required placeholder="Ville, Pays (ex: Montréal, Canada)" />
+        </div>
+
+        <div>
+          <label for="medium" class="required">Médium principal</label>
+          <select id="medium" name="medium" required>
+            <option value="">— Choisir —</option>
+            <option>Peinture</option>
+            <option>Sculpture</option>
+            <option>Photographie</option>
+            <option>Musique</option>
+            <option>Danse</option>
+            <option>Performance</option>
+            <option>Design / Illustration</option>
+            <option>Multimédia / Vidéo</option>
+            <option>Autre</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="practice">Pratique / techniques (ex: acrylique, collage, mixed media)</label>
+          <input id="practice" name="practice" type="text" placeholder="ex: acrylique, collage, art textile" />
+        </div>
+
+        <div class="full">
+          <label for="bio" class="required">Courte biographie (150–500 caractères)</label>
+          <textarea id="bio" name="bio" required placeholder="Écrivez une courte biographie..."></textarea>
+        </div>
+
+        <div>
+          <label for="website">Lien réseau / site</label>
+          <input id="website" name="website" type="url" placeholder="https://..." />
+        </div>
+
+        <div>
+          <label for="photo">Photo (portrait) — JPG/PNG max 5MB</label>
+          <input id="photo" name="photo" type="file" accept="image/*" />
+          <div class="hint">La photo peut être utilisée sur l'annuaire (avec consentement).</div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <label style="display:flex;gap:8px;align-items:center"><input id="consent" name="consent" type="checkbox" required /> J'accepte que mes informations apparaissent dans l'annuaire public.</label>
+        <span class="hint">En cochant, vous autorisez l'affichage du nom, photo et biographie.</span>
+      </div>
+
+      <div class="actions full">
+        <button type="submit">Envoyer l'inscription</button>
+        <button type="button" id="clearBtn" class="secondary">Effacer</button>
+        <div style="margin-left:auto" class="preview" aria-live="polite"><img id="imgPreview" alt="Aperçu photo" src="" style="display:none"/><small id="previewText"></small></div>
+      </div>
+
+      <input type="hidden" name="form-name" value="recensement-artistes-haitiens" />
+
+      <p class="hint" style="margin-top:12px">Remarques :
+        <ul style="margin:6px 0 0 18px">
+          <li>Remplacez <code>ACTION_URL</code> par l'URL de réception des données (Formspree, Netlify Forms, Google Apps Script Web App, etc.).</li>
+          <li>Si vous prévoyez d'utiliser Google Sites, hébergez ce fichier (ex: GitHub Pages) et intégrez-le via <em>Embed &gt; URL</em> ou utilisez directement un <strong>Google Form</strong> pour simplifier la collecte.</li>
+        </ul>
+      </p>
+
+    </form>
+  </div>
+
+  <script>
+    // Prévisualisation image et validations légères côté client
+    const photo = document.getElementById('photo');
+    const imgPreview = document.getElementById('imgPreview');
+    const previewText = document.getElementById('previewText');
+    const form = document.getElementById('artistForm');
+    const clearBtn = document.getElementById('clearBtn');
+
+    photo.addEventListener('change', (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(!f){ imgPreview.style.display='none'; previewText.textContent=''; return }
+      if(f.size > 5 * 1024 * 1024){ alert('Fichier trop volumineux (max 5MB).'); e.target.value=''; return }
+      const url = URL.createObjectURL(f);
+      imgPreview.src = url; imgPreview.style.display='block'; previewText.textContent = f.name;
+    });
+
+    clearBtn.addEventListener('click', ()=>{ form.reset(); imgPreview.style.display='none'; previewText.textContent=''; });
+
+    form.addEventListener('submit', (evt)=>{
+      // Basic required-field check (better UX)
+      const required = ['fullname','location','medium','bio','consent'];
+      for(const id of required){
+        const el = document.getElementById(id);
+        if(!el) continue;
+        if((el.type === 'checkbox' && !el.checked) || (el.value && el.value.trim && el.value.trim()==='') || (el.value === '')){
+          if(el.type === 'checkbox'){
+            alert('Veuillez accepter le consentement pour l'annuaire.');
+          } else {
+            alert('Veuillez remplir le champ: ' + (document.querySelector('label[for="'+id+'"]')?.innerText || id));
+          }
+          evt.preventDefault();
+          return false;
+        }
+      }
+
+      // NOTE: When using a third-party endpoint, check their docs for file support and CORS.
+      // If you want to store submissions in a Google Sheet, create a Google Apps Script web app and replace ACTION_URL with its URL.
+
+      // Let the form submit normally (POST). If you prefer AJAX, replace with fetch() to your endpoint.
+    });
+  </script>
+</body>
+</html>
